@@ -1,0 +1,17 @@
+<div class=row>
+  <div class="col-md-4">
+    <div class="input-group">
+      <input type="text" #jobSearchBox class="form-control" placeholder="Search for a job..." (keyup.enter)="getJob(jobSearchBox.value)" autofocus>
+      <span class="input-group-btn">
+    <button class="btn btn-success" type="button" (click)="getJob(jobSearchBox.value)">Go!</button>
+  </span>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+      <label for="formGroupExampleInput">{{jobPanelHeading}}</label>
+      <div class="well well-md"><p>{{jobDescription}}</p></div>
+  </div>
+</div>

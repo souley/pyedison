@@ -1,0 +1,6 @@
+/* You can add global styles to this file, and also import other style files */
+body{padding-bottom: 300px;}
+
+.panel-primary{
+    margin-top:32px
+}

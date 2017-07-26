@@ -1,0 +1,9 @@
+<div class="btn-group" data-toggle="buttons">
+  <label class="btn" *ngFor="let method of methods; let i = index" (click)="onClick(method, i)">
+               <i class="{{radioClasses[i]}}" ></i>
+               <tooltip-content #myTooltip [animation]="true">
+                  <b>{{tooltipTexts[i]}}</b>
+                </tooltip-content>
+               <span [tooltip]="myTooltip" tooltipPlacement="bottom">{{method}}</span>
+  </label>
+</div>

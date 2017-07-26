@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="input-group">
+      <input type="text" #searchBox class="form-control" placeholder="Search for a skill..." (keyup)="recSkills(searchBox.value)" (keyup.enter)="addSkill(searchBox.value)" [(ngModel)]="inputValue" [disabled]="inputDisabled">
+      <span class="input-group-btn">
+        <button class="btn btn-success" type="button" (click)="addSkill(searchBox.value)">Go!</button>
+    </span>
+    </div>
+    <div class="search-container" [hidden]="hideSearch">
+      <div *ngFor="let rec of recomendedSkills | async" (click)="recSelected(rec)" class="search-result">
+        {{rec.skillName}}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div *ngIf="!showTable">
+      <p><em>{{noSkillsText}}</em></p>
+    </div>
+  </div>
+  <div class="col-md-8 skill-table-container">
+  <table class="table" *ngIf="showTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Skill name</th>
+        <th>Category</th>
+        <th>Category id</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let skill of skills; let i = index">
+        <th scope="row" class="skill-row-index">{{i+1}}</th>
+        <td><span class="skill-row">{{skill.skillName}}</span>
+          <button type="button" class="btn btn-sm btn-danger skill-remove-btn" (click)="removeSkill(skill)">Remove</button></td>
+        <td><span class="skill-row">{{skill.category}}</span></td>
+        <td><span class="skill-row">{{skill.catid}}</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>

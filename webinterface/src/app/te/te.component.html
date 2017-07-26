@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Term Extraction Graphs</div>
+        <div class="panel-body">
+          <div class="row" *ngFor="let ctx of ctxArr; let i = index">
+            <div class="col-md-8">
+              <canvas [id]="ctx" width="800" height="700"></canvas>
+            </div>
+            <div class="col-md-3 col-md-offset-1 page-buttons">
+              <p> Results: {{ 1 + PAGESIZE*(pagenums[i]-1) }} - {{ 40 + PAGESIZE*(pagenums[i]-1) }} </p>
+              <div class="btn-group btn-group-md" role="group" aria-label="...">
+                <button type="button" class="btn btn-danger btn-md" (click)="onPrevClicked(i)" [disabled]="pagenums[i] == 1">Previous page</button>
+                <button type="button" class="btn btn-success btn-md" (click)="onNextClicked(i)" [disabled]="pageBtnDisabled[i]">Next page</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

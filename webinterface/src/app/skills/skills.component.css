@@ -1,0 +1,58 @@
+td {
+  margin: 0;
+  padding: 0;
+}
+
+.skill-row-index {
+  vertical-align: inherit;
+}
+
+.input-group, .panel.panel-primary {
+  margin-bottom: 32px;
+}
+
+.search-container {
+    position: absolute;
+    top: 34px;
+    z-index: 143;
+}
+
+.search-result {
+  border-bottom: 1px solid gray;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+  width: 195px;
+  height: 32px;
+  padding: 5px;
+  background-color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  width: auto;
+}
+
+.search-result:hover {
+  color: #eee;
+  /*background-color: #607D8B;*/
+  background-color: #337ab7;
+}
+
+.hide {
+    display: none;
+}
+
+.panel.panel-primary{
+    margin-bottom:32px;
+}
+
+.skill-remove-btn {
+    float:right;
+}
+
+.skill-row {
+    vertical-align: -webkit-baseline-middle;
+
+}
+
+.skill-table-container {
+    top: -33px;
+}

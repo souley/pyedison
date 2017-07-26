@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-md-4 cv-detail-search">
+    <div class="input-group">
+      <input type="text" #cvSearchBox class="form-control" placeholder="Search for a cv..." (keyup.enter)="getCV(cvSearchBox.value)" [(ngModel)]="inputValue">
+      <span class="input-group-btn">
+    <button class="btn btn-success" type="button" (click)="getCV(cvSearchBox.value)">Go!</button>
+  </span>
+    </div>
+  </div>
+</div>
+
+<div class="row chart-row" [hidden]="hideGraph">
+    <div class="col-md-8 col-md-offset-2">
+      <canvas [id]="graphstr" width="200" height="200"></canvas>
+    </div>
+</div>
+
+<div class="row" [hidden]="hideCvDescription">
+  <div class="col-md-12">
+      <label for="formGroupExampleInput">CV description</label>
+      <div class="well well-md"><p>{{cvDescription}}</p></div>
+  </div>
+</div>
