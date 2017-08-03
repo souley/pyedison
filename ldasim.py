@@ -17,7 +17,7 @@ from pathlib import Path
 #NEWJOB_PATH = '../data/newjobs_json/'
 CV_PATH = '../data/CV/'
 #COMP2_BASE_PATH = '../data/raw_competence2/'
-COMP_PATH = '../data/edison_competences/'
+COMP_PATH = '../data/edison_prep_competences/'
 JOB_PATH = '../results/jobs_en/jobs.jsonl'
 
 tokenizer = RegexpTokenizer(r'\w+')

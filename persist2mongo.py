@@ -24,6 +24,7 @@ import json
 
 def tfidf_cvcomp_collection(db):
     collection = db['tfidf_cvcomp']
+    collection.drop()
     path = '../results/tfidf/cvcomp'
     for filename in os.listdir(path):
         if filename[-3:] == "csv":
@@ -41,6 +42,7 @@ def tfidf_cvcomp_collection(db):
 
 def tfidf_jobcomp_collection(db):
     collection = db['tfidf_jobcomp']
+    collection.drop()
     path = '../results/tfidf/jobcomp'
     for filename in os.listdir(path):
         if filename[-3:] == "csv":
@@ -57,6 +59,7 @@ def tfidf_jobcomp_collection(db):
 
 def tfidf_jobcv_collection(db):
     collection = db['tfidf_jobcv']
+    collection.drop()
     path = '../results/tfidf/jobcv'
     for filename in os.listdir(path):
         if filename[-3:] == "csv":
@@ -247,8 +250,8 @@ def main():
     client = MongoClient('localhost', 27017)
     db = client['erwin2']
 
-    persist_raw_cvs(db)
-    persist_raw_jobs(db)
+#    persist_raw_cvs(db)
+#    persist_raw_jobs(db)
 
     tfidf_jobcomp_collection(db)
     tfidf_cvcomp_collection(db) 
@@ -258,13 +261,13 @@ def main():
 #    sgrank_cvcomp_collection(db) 
 #    sgrank_jobcv_collection(db)
 
-    lda_jobcomp_collection(db)
-    lda_cvcomp_collection(db) 
-    lda_jobcv_collection(db)
+#    lda_jobcomp_collection(db)
+#    lda_cvcomp_collection(db) 
+#    lda_jobcv_collection(db)
 
-    jaccard_jobcomp_collection(db)
-    jaccard_cvcomp_collection(db) 
-    jaccard_jobcv_collection(db)
+#    jaccard_jobcomp_collection(db)
+#    jaccard_cvcomp_collection(db) 
+#    jaccard_jobcv_collection(db)
     
 
 

@@ -154,8 +154,71 @@ def skillrec():
 #        except:
 #            return jsonify({"response": {}, "statusCode": 404, "message": "Generic"})
 
+SE_QUADRANT = ['DSDK03', 'DSDK04', 'DSDK05', 'DSDK06', 'DSDM01', 'DSDM02', 'DSDM03', 'DSDM04']
+SW_QUADRANT = ['DSDM05', 'DSDM06', 'DSENG01', 'DSENG02', 'DSENG03', 'DSENG04', 'DSENG05']
+NW_QUADRANT = ['DSENG06', 'DSRM01', 'DSRM02', 'DSRM03', 'DSRM04', 'DSRM05', 'DSRM06']
+
+
+def surface(cat_sims):
+    from math import cos,sin,copysign
+    coords = []
+    x0 = y0 = 0.0
+    anginc = 360/30
+    ang = anginc
+    first = True
+    for cat_sim in cat_sims:
+        if ang <= 90 or ang >= 180:
+            x = float(cat_sim['distance']) * sin(ang % 90)
+            y = float(cat_sim['distance']) * cos(ang % 90)
+        else:
+            y = float(cat_sim['distance']) * sin(ang % 90)
+            x = float(cat_sim['distance']) * cos(ang % 90)            
+#        comp = cat_sim['category']
+#        if comp in SE_QUADRANT:
+        if ang > 90 and ang <= 180:
+            y = copysign(y, -1)
+#            y = -y
+#        elif comp in SW_QUADRANT:
+        elif ang > 180 and ang <= 270:
+            x = copysign(x, -1)
+            y = copysign(y, -1)
+#            x = -x
+#            y = -y
+#        elif comp in NW_QUADRANT:
+        elif ang > 270 and ang < 360:
+            x = copysign(x, -1)
+#            x = -x
+        else:
+            pass
+        coords.append((x,y))
+        ang += anginc
+        if first:
+            x0 = x
+            y0 = y
+            first = False
+    coords.append((x0, y0))
+    sum1 = 0.0
+    sum2 = 0.0
+    for i in range(1, len(coords)):
+        sum1 += coords[i-1][0] * coords[i][1]
+        sum2 += coords[i-1][1] * coords[i][0]
+    aire = (sum2 - sum1)/2.0
+    return aire
+
+
+def common_area(cv_sims, job_sims):
+    diff_sims = []
+    for i in range(0, cv_sims.count()):
+        diff_sim = {}
+        diff_sim['category'] = cv_sims[i]['category']
+        diff_sim['distance'] = min(cv_sims[i]['distance'], job_sims[i]['distance'])
+        diff_sims.append(diff_sim)
+    return surface(diff_sims)
+
 @app.route('/edisongraph', methods=['POST'])
 def edison_graph():
+    from math import fabs
+    import collections
     if request.method == 'POST':
         try:
             json_data = json.loads(request.get_data().decode('utf-8'))
@@ -165,14 +228,15 @@ def edison_graph():
             validate_method(method)
             pagenum = int(json_data['pagenum'])
             PAGESIZE = 6
-            job_surface = 0.0
             #get job-category similarities
-            job_cat_diffs = db[method +'_jobcomp'].find({"jobid": job_id}, {"distance": 1, "_id": 0, "category": 1})\
-                .sort("distance", 1)
-            job_diff_obj = {}
+#            job_cat_diffs = db[method +'_jobcomp'].find({"jobid": job_id}, {"distance": 1, "_id": 0, "category": 1})\
+#                .sort("distance", 1)
+#            job_cat_diffs = db[method +'_jobcomp'].find({"jobid": job_id}, {"distance": 1, "_id": 0, "category": 1})\
+#                .sort("category", 1)
+            job_cat_diffs = db[method +'_jobcomp'].find({"jobid": job_id}, {"distance": 1, "_id": 0, "category": 1})
+            job_diff_obj = collections.OrderedDict()#{}
             for job_cat_diff in job_cat_diffs:
                 job_diff_obj[job_cat_diff['category']] = job_cat_diff['distance']
-                job_surface += float(job_cat_diff['distance'])
             #Fetch  best CVs for this job
             cv_differences = []
 #            cvs = db[method + '_jobcv'].find({"jobid": job_id}).sort("distance", 1).skip(PAGESIZE*(pagenum-1)).limit(PAGESIZE)
@@ -180,21 +244,27 @@ def edison_graph():
             cvs = db['raw_cvs'].find()
             print(cvs.count())
             cv_surfaces = []
+#            job_cat_diffs = db[method +'_jobcomp'].find({"jobid": job_id}, {"distance": 1, "_id": 0, "category": 1})\
+#                .sort("category", 1)
+            job_cat_diffs = db[method +'_jobcomp'].find({"jobid": job_id}, {"distance": 1, "_id": 0, "category": 1})
+            
             for cv in cvs:
-                cv_surface = 0.0
                 cv_sobj = {"cvid": cv['cvid']}
+#                cv_cat_diffs = db[method + '_cvcomp'].find({"cvid": cv['cvid']}, {"_id":0, "distance": 1, "category": 1}).sort("category", 1)
                 cv_cat_diffs = db[method + '_cvcomp'].find({"cvid": cv['cvid']}, {"_id":0, "distance": 1, "category": 1})
-                for cv_cat_diff in cv_cat_diffs:
-                    cv_surface += float(cv_cat_diff['distance'])
-                cv_sobj["surface"] = abs(job_surface - cv_surface)
+                cv_surface = common_area(cv_cat_diffs, job_cat_diffs) #surface(cv_cat_diffs)
+                cv_sobj["surface"] = fabs(cv_surface)
                 cv_surfaces.append(cv_sobj)
-            print(len(cv_surfaces))
-            cv_surfaces.sort(key=lambda cv: cv['surface'])
-            for cv in cv_surfaces[:PAGESIZE]:
+            print('=srufaces calculated...')
+            cv_surfaces.sort(key=lambda cv: cv['surface'], reverse = True)
+#            print('=srufaces calculated...')
+            for cv in cv_surfaces[PAGESIZE*(pagenum-1):PAGESIZE*pagenum]:
+#            for cv in cv_surfaces[:PAGESIZE]:
                 print(cv["cvid"])
+                print(cv["surface"])
                 cv_obj = {"cvid": cv['cvid'], "job_distance": cv["surface"]}
                 cv_cat_diffs = db[method + '_cvcomp'].find({"cvid": cv['cvid']}, {"_id":0, "distance": 1, "category": 1})
-                skill_differences = {}
+                skill_differences = collections.OrderedDict()#{}
                 for cv_cat_diff in cv_cat_diffs:
                     skill_differences[cv_cat_diff['category']] = cv_cat_diff['distance']
                 cv_obj["skill_differences"] = skill_differences
